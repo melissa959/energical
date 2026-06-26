@@ -1,16 +1,13 @@
-# Ignore all Energical data
-docs/
+docs/energical_catalogue_produits.csv
+docs/energical_arbres_decision.json
+docs/energical_dialogues_clients.json
+docs/energical_dictionnaire_donnees.csv
 
-# Python
-__pycache__/
-*.pyc
-.venv/
 .env
-
-# Vector database
-faiss_index/
+*.csv
+*.json
+pycache/
+.venv/
+*.pyc
 chroma_db/
-
-# IDE
-.vscode/
-.idea/
+faiss_index/
