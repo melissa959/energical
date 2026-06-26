@@ -1,0 +1,368 @@
+{
+  "meta": {
+    "note": "Dialogues clients anonymisés. Tous les id_produit entre crochets correspondent à des produits réels du catalogue (energical_catalogue_produits.csv)."
+  },
+  "dialogues": [
+    {
+      "id": "DLG-001",
+      "langue": "fr",
+      "famille_cible": "chaudiere",
+      "produits_cites": [
+        "GCD32SLL32",
+        "GCDFGGF340"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "Bonjour, je veux une chaudière pour chauffer ma maison et avoir de l'eau chaude."
+        },
+        {
+          "role": "agent",
+          "msg": "Bonjour ! Quelle est la surface de votre logement en m² ?"
+        },
+        {
+          "role": "client",
+          "msg": "110 m², 2 étages, isolation moyenne."
+        },
+        {
+          "role": "agent",
+          "msg": "Dans quelle région habitez-vous ? (côtière / hauts plateaux / Sud)"
+        },
+        {
+          "role": "client",
+          "msg": "Hauts plateaux."
+        },
+        {
+          "role": "agent",
+          "msg": "Quel type d'énergie ? (gaz / électrique)"
+        },
+        {
+          "role": "client",
+          "msg": "Gaz."
+        },
+        {
+          "role": "agent",
+          "msg": "Je recommande la Chaudière SL-DL32 [GCD32SLL32], adaptée à 110 m² en hiver rigoureux. Filtre à gaz G3/4 [GCDFGGF340] suggéré à l'installation."
+        }
+      ]
+    },
+    {
+      "id": "DLG-002",
+      "langue": "darija",
+      "famille_cible": "chauffe_eau",
+      "produits_cites": [
+        "GCH10PN002"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "slm khoya, 7ab chauffe eau, drna f gaz."
+        },
+        {
+          "role": "agent",
+          "msg": "Mar7ba ! Gaz naturel wla butane ?"
+        },
+        {
+          "role": "client",
+          "msg": "gaz naturel, 10 litres ikfi."
+        },
+        {
+          "role": "agent",
+          "msg": "Ana nansa7ek bel Chauffe-eau Piézo 10L Gaz naturel [GCH10PN002]."
+        }
+      ]
+    },
+    {
+      "id": "DLG-003",
+      "langue": "fr",
+      "famille_cible": "disjoncteur",
+      "produits_cites": [
+        "E02032PC32"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "Je cherche une protection pour mon tableau, réseau monophasé."
+        },
+        {
+          "role": "agent",
+          "msg": "Quelle intensité nominale et voulez-vous une protection contre les fuites de courant ?"
+        },
+        {
+          "role": "client",
+          "msg": "32A avec protection différentielle 30mA."
+        },
+        {
+          "role": "agent",
+          "msg": "Je recommande le Disjoncteur différentiel 30mA 32A DDS.32A [E02032PC32]."
+        }
+      ]
+    },
+    {
+      "id": "DLG-004",
+      "langue": "fr",
+      "famille_cible": "porte",
+      "produits_cites": [
+        "SKU-33875",
+        "SKU-28789"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "Bonjour, il me faut une porte d'entrée, ma réservation fait 830mm."
+        },
+        {
+          "role": "agent",
+          "msg": "Type de cadre souhaité ? WPC 140mm, WPC 110mm ou bois latté ?"
+        },
+        {
+          "role": "client",
+          "msg": "WPC 140mm, et une poignée à clé."
+        },
+        {
+          "role": "agent",
+          "msg": "Porte MDF 830mm cadre WPC 140mm [SKU-33875] + Poignée avec clé [SKU-28789]. Rappel : mesurez la réservation (mur brut), acompte 30% à la commande."
+        }
+      ]
+    },
+    {
+      "id": "DLG-005",
+      "langue": "mixte",
+      "famille_cible": "chauffe_eau",
+      "produits_cites": [
+        "SKU-29635",
+        "SKU-36627"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "je veux chauffe eau température constante gaz naturel, petite famille."
+        },
+        {
+          "role": "agent",
+          "msg": "Pour une petite famille : WCT-12L Gaz naturel [SKU-29635]. Pour plus de débit (famille plus grande) : WCT-16L [SKU-36627]."
+        },
+        {
+          "role": "client",
+          "msg": "w ila makanch ?"
+        },
+        {
+          "role": "agent",
+          "msg": "Si rupture du WCT-12L, alternative directe : WCT-16L [SKU-36627]."
+        }
+      ]
+    },
+    {
+      "id": "DLG-006",
+      "langue": "fr",
+      "famille_cible": "visiophone",
+      "produits_cites": [
+        "E300407X02"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "Je veux un interphone complet pour ma maison."
+        },
+        {
+          "role": "agent",
+          "msg": "Câblage 2 fils ou 4 fils ?"
+        },
+        {
+          "role": "client",
+          "msg": "Je préfère un pack audio complet."
+        },
+        {
+          "role": "agent",
+          "msg": "Pack interphone audio 4 fils ADE07 [E300407X02] — sonnette et combine inclus."
+        }
+      ]
+    },
+    {
+      "id": "DLG-007",
+      "langue": "fr",
+      "famille_cible": "robinet_gaz",
+      "produits_cites": [
+        "GKB04ROBG6"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "Il me faut un robinet pour mon compteur gaz extérieur."
+        },
+        {
+          "role": "agent",
+          "msg": "Quel débit de compteur ? G6 ?"
+        },
+        {
+          "role": "client",
+          "msg": "G6."
+        },
+        {
+          "role": "agent",
+          "msg": "Robinet compteur G6 MOP 0,5 [GKB04ROBG6], corps laiton conforme NF EN 331."
+        }
+      ]
+    },
+    {
+      "id": "DLG-008",
+      "langue": "darija",
+      "famille_cible": "robinetterie",
+      "produits_cites": [
+        "WMA2C00C00"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "7abit mitigeur l cuisine, entrée de gamme."
+        },
+        {
+          "role": "agent",
+          "msg": "Mitigeur Cuisine Amen [WMA2C00C00], entrée de gamme, finition chromée."
+        }
+      ]
+    },
+    {
+      "id": "DLG-009",
+      "langue": "fr",
+      "famille_cible": "disjoncteur",
+      "produits_cites": [
+        "E04014P100"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "J'ai une installation triphasée pour un petit atelier, je cherche une protection."
+        },
+        {
+          "role": "agent",
+          "msg": "Quelle intensité approximative ? (80, 100, 125 A…)"
+        },
+        {
+          "role": "client",
+          "msg": "Autour de 100A."
+        },
+        {
+          "role": "agent",
+          "msg": "Disjoncteur compact triphasé DM1N 100A [E04014P100], adapté usage atelier."
+        }
+      ]
+    },
+    {
+      "id": "DLG-010",
+      "langue": "darija",
+      "famille_cible": "porte",
+      "produits_cites": [
+        "SKU-33869",
+        "SKU-28789"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "slm, 7ab bab dakhel l dar, reservation 730mm."
+        },
+        {
+          "role": "agent",
+          "msg": "WPC 140mm wla 110mm ? w chno poignée ?"
+        },
+        {
+          "role": "client",
+          "msg": "WPC 140mm, poignée b clé."
+        },
+        {
+          "role": "agent",
+          "msg": "Porte MDF 730mm WPC 140mm [SKU-33869] + Poignée avec clé [SKU-28789]. Khasek tʿayer la réservation mch la porte."
+        }
+      ]
+    },
+    {
+      "id": "DLG-011",
+      "langue": "fr",
+      "famille_cible": "chaudiere",
+      "produits_cites": [
+        "GCD32SLL32"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "Ma vieille chaudière est morte, j'habite un F4 à Sétif, je veux remplacer."
+        },
+        {
+          "role": "agent",
+          "msg": "Quelle surface environ, et gaz ou électrique ?"
+        },
+        {
+          "role": "client",
+          "msg": "Environ 100 m², gaz."
+        },
+        {
+          "role": "agent",
+          "msg": "À Sétif (hiver rigoureux) pour 100 m², je recommande la Chaudière SL-DL32 [GCD32SLL32]."
+        }
+      ]
+    },
+    {
+      "id": "DLG-012",
+      "langue": "mixte",
+      "famille_cible": "robinet_gaz",
+      "produits_cites": [
+        "WRI03DRG12"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "je veux robinet gaz pour cuisinière, raccord double."
+        },
+        {
+          "role": "agent",
+          "msg": "Robinet double raccord G1/2 [WRI03DRG12], installation intérieure, corps laiton."
+        },
+        {
+          "role": "client",
+          "msg": "il est en stock ?"
+        },
+        {
+          "role": "agent",
+          "msg": "Oui, disponible. Conforme aux normes de sécurité."
+        }
+      ]
+    },
+    {
+      "id": "DLG-013",
+      "langue": "fr",
+      "famille_cible": "chauffe_eau",
+      "produits_cites": [
+        "GCH06PN001"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "Bonjour, chauffe-eau pour un petit appartement, 2 personnes, gaz naturel."
+        },
+        {
+          "role": "agent",
+          "msg": "Pour 2 personnes en gaz naturel : Chauffe-eau Piézo 6L [GCH06PN001]."
+        }
+      ]
+    },
+    {
+      "id": "DLG-014",
+      "langue": "darija",
+      "famille_cible": "visiophone",
+      "produits_cites": [
+        "E30020901B",
+        "E30020901C"
+      ],
+      "tours": [
+        {
+          "role": "client",
+          "msg": "3andi villa, 7ab sonnette 2 fils b RFID."
+        },
+        {
+          "role": "agent",
+          "msg": "Sonnette 2 fils avec lecteur RFID VFE09-C [E30020901B]. Attention : la VFE09 sans RFID [E30020901C] est actuellement en rupture de stock."
+        }
+      ]
+    }
+  ]
+}
