@@ -1,0 +1,16 @@
+# Ignore all Energical data
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Vector database
+faiss_index/
+chroma_db/
+
+# IDE
+.vscode/
+.idea/
