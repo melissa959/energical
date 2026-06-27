@@ -1,6 +1,5 @@
 import chromadb
 from sentence_transformers import SentenceTransformer
-import ollama  # Handles the context-condensing LLM call
 # Import the class from your separate intent_matcher.py file!
 from intent_matcher import ScalableIntentMatcher 
 
@@ -10,50 +9,20 @@ COLLECTION_NAME = "energical_catalog"
 # Initialize the scalable matcher globally (reads/creates 'patterns_catalog.json')
 matcher = ScalableIntentMatcher()
 
-def contextualize_query(user_query: str, chat_history: list) -> str:
-    """
-    Reads the history to turn shorthand statements (e.g., "اعطيني وحدة خفيفة")
-    into an explicit search query based on what was discussed before.
-    """
-    if not chat_history:
-        return user_query
-        
-    # Take the last 3 turns to keep context brief and fast
-    recent_history = chat_history[-3:]
-    history_str = ""
-    for turn in recent_history:
-        history_str += f"{turn['role'].upper()}: {turn['content']}\n"
-        
-    condensing_prompt = f"""
-    Given the following conversation history and a follow-up question, rewrite the follow-up question to be a standalone search query containing explicit hardware keywords (like boiler, gas, electric).
-    
-    Chat History:
-    {history_str}
-    Follow-up Question: {user_query}
-    
-    Standalone search query (Output ONLY the optimized search string, nothing else):
-    """
-    try:
-        response = ollama.generate(model='llama3', prompt=condensing_prompt)
-        return response['response'].strip()
-    except Exception:
-        # Fallback to the original query if Ollama is busy or offline
-        return user_query
-
 def retrieve(query: str, chat_history: list, model: SentenceTransformer, collection: chromadb.Collection, k: int = 5) -> list[dict]:
     """
-    Upgraded Phase 3 Retrieval Engine:
-    Takes the query and chat history from Programmer 1, extracts multilingual 
-    patterns, searches ChromaDB, and passes the output to Programmer 2.
+    PHASE 3 RETRIEVAL ENGINE (Corrected Contract)
+    
+    Inputs:
+      - query: The raw current user string.
+      - chat_history: Accepted to maintain pipeline structure (passed to metadata or logged).
     """
-    # 1. READ AND PROCESS THE MEMORY CONVERSATION HERE
-    optimized_query = contextualize_query(query, chat_history)
     
-    # 2. Extract dynamic keywords using your new modular file
-    extracted_keywords = matcher.extract_keywords(optimized_query)
+    # 1. Extract dynamic keywords directly from the user's raw query text
+    extracted_keywords = matcher.extract_keywords(query)
     
-    # Combine the original text and matching tokens to maximize mathematical distance accuracy
-    final_search_string = f"{optimized_query} {extracted_keywords}".strip()
+    # 2. Combine the original text and matching tokens to maximize mathematical alignment
+    final_search_string = f"{query} {extracted_keywords}".strip()
     
     # 3. Convert the enriched search anchor into a vector coordinate
     query_vector = model.encode(final_search_string).tolist()
@@ -67,7 +36,6 @@ def retrieve(query: str, chat_history: list, model: SentenceTransformer, collect
     # 5. Format the results into a structured list of dictionaries
     formatted_results = []
     
-    # Your verified nested loop parsing ChromaDB's output arrays
     if results['documents'] and len(results['documents'][0]) > 0:
         for i in range(len(results['documents'][0])):
             product_packet = {
@@ -75,10 +43,11 @@ def retrieve(query: str, chat_history: list, model: SentenceTransformer, collect
                 "document_text": results['documents'][0][i],
                 "metadata": results['metadatas'][0][i],
                 "distance": results['distances'][0][i] if 'distances' in results else None,
-                "search_anchor_used": final_search_string  # Helpful trail for your team to debug matches
+                "search_anchor_used": final_search_string
             }
             formatted_results.append(product_packet)
             
+    # Send these raw products directly to Programmer 2 (Phase 4B)
     return formatted_results
 
 if __name__ == "__main__":
@@ -90,19 +59,14 @@ if __name__ == "__main__":
     print("[RAG Backend] Loading multilingual transformer weights...")
     model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
     
-    # Mocking data structures provided by Programmer 1's UI layer
-    MOCK_HISTORY = [
-        {"role": "user", "content": "bghit chaudière dial gaz"},
-        {"role": "assistant", "content": "Bien sûr! Quel budget ou spécification recherchez-vous?"}
-    ]
-    TEST_INPUT = "اعطيني وحدة خفيفة" # "Give me a lightweight one"
+    # Simulating what Programmer 1 passes. Your code safely accepts it without crashing.
+    MOCK_HISTORY = [{"role": "user", "content": "Hello"}]
+    TEST_INPUT = "bghit chaudière khfifa dial gaz svpl"
     
-    print(f"\n[Test] Simulating integration request with query: '{TEST_INPUT}'")
     matches = retrieve(TEST_INPUT, MOCK_HISTORY, model, collection, k=2)
     
-    print("\n=== SYSTEM INTEGRATION OUTPUT ===")
+    print("\n=== CLEAN PHASE 3 RETRIEVAL OUTPUT ===")
     for idx, item in enumerate(matches, 1):
         print(f"\nMatch #{idx} (Distance: {item['distance']:.4f})")
         print(f" ├── Enriched Anchor: {item['search_anchor_used']}")
-        print(f" ├── Extracted Content: {item['document_text']}")
         print(f" └── Target Metadata: Stock State -> {item['metadata']['statut_stock']}")
