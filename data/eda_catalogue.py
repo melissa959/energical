@@ -107,3 +107,4 @@ text_splitter = RecursiveCharacterTextSplitter(
     separators=["\\n\\n", "\\n", " ", ""],
     length_function=len,
 )
+````"""
