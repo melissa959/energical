@@ -48,7 +48,7 @@ def build_vector_index(csv_path: str, model: SentenceTransformer):
 
 if __name__ == "__main__":
     # Path to your catalog data
-    CSV_FILE_PATH = "../docs/energical_catalogue_produits.csv"
+    CSV_FILE_PATH = "docs/energical_catalogue_produits.csv"
     
     # Initialize the model we verified in Step 2
     print("[vector_db] Attaching local embedding engine...")
