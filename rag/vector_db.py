@@ -23,7 +23,8 @@ def build_vector_database():
         client.delete_collection(name=COLLECTION_NAME)
     except Exception:
         pass
-    collection = client.create_collection(name=COLLECTION_NAME)
+    collection = client.create_collection(name=COLLECTION_NAME,
+                                          metadata={"hnsw:space": "cosine"}) # to normalize
     
     # 3. Load your embedding model
     print("[Database Builder] Loading translation embedding engine weights...")
