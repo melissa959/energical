@@ -1,6 +1,5 @@
 import re
 
-# Built directly from catalogue_propre.csv unique values
 CATEGORY_KEYWORDS = {
     "Sanitaire": [
         "sanitaire", "baignoire", "robinet", "mitigeur", "douche",
@@ -28,7 +27,6 @@ CATEGORY_KEYWORDS = {
     ],
 }
 
-# Built from sous_categorie column — top-level groupings
 SOUS_CATEGORIE_KEYWORDS = {
     "Chauffage et régulation gaz > Chaudières": [
         "chaudière", "chaudiere", "boiler", "chauffage gaz"
@@ -85,6 +83,30 @@ SOUS_CATEGORIE_KEYWORDS = {
     ],
 }
 
+# ── NEW: decision tree field keywords ────────────────────────
+REGION_KEYWORDS = {
+    "Nord":   ["nord", "alger", "oran", "annaba", "bejaia", "tizi", "blida", "boumerdes"],
+    "Sud":    ["sud", "tamanrasset", "adrar", "ouargla", "ghardaia", "biskra", "bechar"],
+    "Est":    ["est", "constantine", "setif", "batna", "skikda", "guelma"],
+    "Ouest":  ["ouest", "tlemcen", "sidi bel", "mascara", "relizane", "ain temouchent"],
+    "Centre": ["centre", "medea", "chlef", "tiaret", "djelfa", "msila"],
+}
+
+ENERGIE_KEYWORDS = {
+    "gaz":         ["gaz", "gas", "naturel", "قاز"],
+    "electrique":  ["électrique", "electrique", "electric", "electricite", "كهربائي"],
+    "fioul":       ["fioul", "fuel", "mazout"],
+    "bois":        ["bois", "pellet", "granule"],
+    "solaire":     ["solaire", "solar", "panneau solaire"],
+}
+
+USAGE_KEYWORDS = {
+    "chauffage":            ["chauffage", "chauffer", "heating", "تدفئة", "central"],
+    "eau chaude sanitaire": ["eau chaude", "sanitaire", "ecs", "douche", "bain"],
+    "mixte":                ["mixte", "combiné", "combine", "chauffage et eau"],
+}
+# ─────────────────────────────────────────────────────────────
+
 
 class MemoryExtractor:
 
@@ -94,39 +116,72 @@ class MemoryExtractor:
         data = {}
         text = message.lower()
 
-        # --- Category (from catalogue categorie column) ---
+        # --- Category ---
         for category, keywords in CATEGORY_KEYWORDS.items():
             if any(kw in text for kw in keywords):
                 data["category"] = category
                 break
 
-        # --- Sous-categorie (from catalogue sous_categorie column) ---
+        # --- Sous-categorie ---
         for sous_cat, keywords in SOUS_CATEGORIE_KEYWORDS.items():
             if any(kw in text for kw in keywords):
                 data["sous_categorie"] = sous_cat
                 break
 
-        # --- Budget (handles: 5000, 5000 da, 5000 dzd, "5 000 DA") ---
+        # --- Budget ---
         budget_match = re.search(
-            r"(\d[\d\s]{1,6})\s*(da|dzd|دج)?",
-            text
+            r"(\d[\d\s]{1,6})\s*(da|dzd|دج)?", text
         )
         if budget_match:
             raw = budget_match.group(1).replace(" ", "")
             try:
                 value = int(raw)
-                # ignore single digits that are not prices
                 if value >= 100:
                     data["budget"] = value
             except ValueError:
                 pass
 
-        # --- Capacity in litres (e.g. 80L, 100 litres, 50l) ---
+        # --- Capacity in litres ---
         capacity_match = re.search(
-            r"(\d+)\s*(l\b|litres?|litre)",
-            text
+            r"(\d+)\s*(l\b|litres?|litre)", text
         )
         if capacity_match:
             data["capacity"] = int(capacity_match.group(1))
+
+        # ── NEW: decision tree fields ─────────────────────────
+
+        # surface_m2 — e.g. "120m2", "120 m²", "120 metres"
+        surface_match = re.search(
+            r"(\d+)\s*(m2|m²|m carré|metres?|مترمربع)", text
+        )
+        if surface_match:
+            data["surface_m2"] = int(surface_match.group(1))
+
+        # region
+        for region, keywords in REGION_KEYWORDS.items():
+            if any(kw in text for kw in keywords):
+                data["region"] = region
+                break
+
+        # energie
+        for energie, keywords in ENERGIE_KEYWORDS.items():
+            if any(kw in text for kw in keywords):
+                data["energie"] = energie
+                break
+
+        # usage
+        for usage, keywords in USAGE_KEYWORDS.items():
+            if any(kw in text for kw in keywords):
+                data["usage"] = usage
+                break
+
+        # condensation — oui/non
+        if any(kw in text for kw in ["condensation", "condensing", "condensateur"]):
+            if any(kw in text for kw in ["sans", "non", "pas", "no"]):
+                data["condensation"] = "non"
+            else:
+                data["condensation"] = "oui"
+
+        # ─────────────────────────────────────────────────────
 
         return data

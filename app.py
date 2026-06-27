@@ -70,38 +70,7 @@ for result in st.session_state.results:
 
         st.markdown("---")
         
-        # Product Table / Cards View
-        products = result["retrieved_products"]
-        st.markdown(f"#### Retrieved Documents ({len(products)} records found)")
-
-        if products:
-            cols = st.columns(3)
-            for i, p in enumerate(products):
-                m = p["metadata"]
-                dist = p.get("distance")
-                stock = m.get("statut_stock", "Unknown")
-                
-                # Dynamic technical clean status strings (No emojis)
-                if "Disponible" in stock:
-                    stock_status = "Available"
-                elif "commande" in stock.lower():
-                    stock_status = "On Order"
-                else:
-                    stock_status = "Out of Stock"
-                
-                with cols[i % 3]:
-                    with st.container(border=True):
-                        st.markdown(f"##### {m.get('nom', 'N/A')}")
-                        st.markdown(f"**Category:** {m.get('categorie', 'N/A')}")
-                        st.markdown(f"**Price:** {m.get('prix', 'N/A')} DA")
-                        
-                        col_card_l, col_card_r = st.columns(2)
-                        with col_card_l:
-                            st.caption(f"Status: {stock_status}")
-                        with col_card_r:
-                            st.caption(f"Distance: {f'{dist:.4f}' if dist is not None else 'N/A'}")
-        else:
-            st.warning("No candidate records returned by the vector similarity search engine.")
+        
 
         # Bottom Debug Footer
         dialogue = result.get("dialogue")
@@ -113,26 +82,75 @@ for result in st.session_state.results:
                 f"Classification Metrics — Family: {family} | "
                 f"Language Profile: {lang} | Structural Match Score: {score:.3f}"
             )
+            
+            
+            # ── NEW: LLM RECOMMENDATION PANEL ────────────────────
+        st.markdown("---")
+        st.markdown("#### AI Recommendation")
+
+        status   = result.get("business_status", "")
+        allowed  = result.get("allow_recommendation", False)
+        llm_answer = result.get("llm_answer", "")
+        missing  = result.get("missing_information", [])
+
+        if allowed and llm_answer:
+            st.success(llm_answer)
+
+        elif status == "NOT_ENOUGH_TURNS":
+            st.info("Still collecting information — minimum 3 turns required before recommendation.")
+
+        elif status == "MISSING_INFORMATION":
+            st.warning(
+                "Missing required fields: "
+                + ", ".join(missing)
+            )
+            if llm_answer:
+                st.info(llm_answer)
+
+        elif status in ("NO_PRODUCTS_FOUND", "NO_AVAILABLE_PRODUCTS"):
+            st.error("No available products found for this request.")
+            if llm_answer:
+                st.info(llm_answer)
+
+        elif status == "UNKNOWN_CATEGORY":
+            st.warning("Category not recognized.")
+
+        else:
+            if llm_answer:
+                st.info(llm_answer)
+        # ─────────────────────────────────────────────────────
 
 # --- TECHNICAL METRICS SIDEBAR ---
 with st.sidebar:
     st.subheader("Session Pipeline Data")
-    st.markdown(f"**Active Session Length:** {st.session_state.chat.turns.get_turn_count()} Turns Processed")
+    st.markdown(
+        f"**Active Session Length:** {st.session_state.chat.turns.get_turn_count()} Turns Processed"
+    )
     st.markdown("---")
-    
+
     st.markdown("**Dialogue Log Grid:**")
-    for msg in st.session_state.chat.history.get_history():
+
+    history = st.session_state.chat.history.get_history()
+
+    for i, msg in enumerate(history):
         role_tag = "USER" if msg["role"] == "user" else "ASSISTANT"
+
         st.text_area(
-            label=f"[{role_tag}]", 
-            value=msg['content'], 
-            height=68, 
+            label=f"[{role_tag}]",
+            value=msg["content"],
+            height=68,
             disabled=True,
-            key=f"sidebar_msg_{msg['content'][:10]}_{result['turn_count']}" if 'result' in locals() else None
+            key=f"sidebar_msg_{i}"
         )
 
     st.markdown("---")
-    if st.button("Reset Global Pipeline Cache", use_container_width=True, type="primary"):
+
+    if st.button(
+        "Reset Global Pipeline Cache",
+        key="reset_cache_button",
+        use_container_width=True,
+        type="primary",
+    ):
         del st.session_state["chat"]
         del st.session_state["results"]
         st.rerun()

@@ -120,49 +120,39 @@ class DecisionTree:
         if not self.category_exists(category):
 
             return {
-
-                "ready": False,
-
-                "status": "UNKNOWN_CATEGORY",
-
+                "ready":   False,
+                "status":  "UNKNOWN_CATEGORY",
                 "missing": [],
-
-                "message":
-                f"The category '{category}' does not exist."
-
+                "message": f"The category '{category}' does not exist."
             }
 
-        missing = self.missing_fields(
-            category,
-            collected_info
-        )
+        required = self.required_fields(category)
 
-        # Missing information
-        if len(missing) > 0:
+        # Count filled fields
+        filled = [
+            field for field in required
+            if collected_info.get(field)
+        ]
+
+        # Pass if at least 3 fields are filled
+        if len(filled) >= 3:
 
             return {
-
-                "ready": False,
-
-                "status": "MISSING_INFORMATION",
-
-                "missing": missing,
-
-                "message":
-                "More customer information is required."
-
+                "ready":   True,
+                "status":  "READY",
+                "missing": [],
+                "message": "Enough information collected."
             }
 
-        # Everything is complete
+        # Not enough filled fields
+        missing = [
+            field for field in required
+            if not collected_info.get(field)
+        ]
+
         return {
-
-            "ready": True,
-
-            "status": "READY",
-
-            "missing": [],
-
-            "message":
-            "Decision tree requirements satisfied."
-
+            "ready":   False,
+            "status":  "MISSING_INFORMATION",
+            "missing": missing,
+            "message": "Need at least three useful fields."
         }

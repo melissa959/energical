@@ -5,8 +5,12 @@ from sentence_transformers import SentenceTransformer
 from document_loader import prepare_product_documents
 from intent_matcher import ScalableIntentMatcher
 
-CSV_PATH = "../docs/catalogue_propre.csv"
-CHROMA_DATA_PATH = "../chroma_db"
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+CSV_PATH = BASE_DIR / "docs" / "catalogue_propre.csv"
+CHROMA_DATA_PATH = BASE_DIR / "chroma_db"
 COLLECTION_NAME = "energical_catalog"
 
 def build_vector_database():

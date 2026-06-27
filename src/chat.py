@@ -13,6 +13,9 @@ from src.turn_manager import TurnManager
 from src.dialogue_loader import DialogueLoader
 from src.dialogue_retriever import DialogueRetriever
 from src.query_builder import QueryBuilder
+# ── NEW ──────────────────────────────────────────────────────
+from business.process_business_rules import BusinessRecommendationEngine
+# ─────────────────────────────────────────────────────────────
 
 # Import your Phase 3 module!
 from rag.retrieval import retrieve
@@ -44,6 +47,10 @@ class ChatManager:
 
         print("[ChatManager] Loading shared translation vector embedding core...")
         self.model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+        
+        # ── NEW ──────────────────────────────────────────────
+        self.engine = BusinessRecommendationEngine()
+        # ─────────────────────────────────────────────────────
 
     def send_message(self, user_message: str) -> dict:
         # --- PHASE 4A — PART 1: CONVERSATION PIPELINE ---
@@ -77,6 +84,31 @@ class ChatManager:
             collection=self.collection,
             k=5
         )
+        
+        # ── PHASE 4B — business rules + LLM ──────────────────
+        mem = self.memory.to_dict()
+
+        # Use the product family detected by the dialogue classifier
+        # (this should match the keys in energical_arbres_decision.json)
+        category = dialogue_result.get("family", "")
+
+        turn_count = self.turns.get_turn_count()
+
+        # Debug (temporary)
+        print(f"[Business] Dialogue family: {category}")
+        print(f"[Business] Memory: {mem}")
+
+        business_result = self.engine.process_business_rules(
+        category=category,
+        collected_information=mem,
+        turn_count=turn_count,
+        retrieved_products=retrieved_products,
+        user_question=user_message,
+       )
+        # Save assistant response in chat history
+        if business_result.get("llm_answer"):
+         self.history.add_assistant(business_result["llm_answer"])
+       # ─────────────────────────────────────────────────────
 
         # Return the clean merged state contract directly to the UI
         return {
@@ -87,4 +119,10 @@ class ChatManager:
             "retrieval_query":    query,
             "chat_history":       self.history.get_history(),
             "retrieved_products": retrieved_products,  # The verified vector search output array
+                        # ── NEW ──────────────────────────────────────────
+            "business_status":    business_result["status"],
+            "allow_recommendation": business_result["allow_recommendation"],
+            "llm_answer":         business_result.get("llm_answer", ""),
+            "missing_information": business_result.get("missing_information", []),
+            # ─────────────────────────────────────────────────
         }
