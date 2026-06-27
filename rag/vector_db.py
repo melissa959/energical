@@ -1,58 +1,59 @@
 import os
-import numpy as np
-from sentence_transformers import SentenceTransformer
 import chromadb
-# Import your document loader logic directly from your Step 1 file
+from sentence_transformers import SentenceTransformer
+# Import your two critical helper files
 from document_loader import prepare_product_documents
+from intent_matcher import ScalableIntentMatcher
 
+CSV_PATH = "../docs/catalogue_propre.csv"
 CHROMA_DATA_PATH = "../chroma_db"
 COLLECTION_NAME = "energical_catalog"
 
-def build_vector_index(csv_path: str, model: SentenceTransformer):
-    """
-    Step 3: Processes all 731 rows from the catalog, computes their embeddings,
-    and stores them in a local, persistent ChromaDB collection.
-    """
-    print("\n===  BUILDING VECTOR DATABASE INDEX ===")
+def build_vector_database():
+    print("[Database Builder] Extracting data from product catalog CSV...")
+    # 1. Read and format items from CSV using your document loader
+    documents, metadatas, ids = prepare_product_documents(CSV_PATH)
     
-    # 1. Fetch data from Step 1
-    documents, metadatas, ids = prepare_product_documents(csv_path)
-    
-    # 2. Connect to a local storage client
+    # 2. Connect to ChromaDB (It will automatically create the folder since it's deleted)
+    print("[Database Builder] Initializing new physical ChromaDB instance...")
     client = chromadb.PersistentClient(path=CHROMA_DATA_PATH)
-    collection = client.get_or_create_collection(name=COLLECTION_NAME, metadata={"hnsw:space": "cosine"})
     
-    # 3. Generate embeddings for all documents at once
-    print(f"[vector_db] Encoding {len(documents)} text blocks into mathematical vectors...")
-    embeddings = model.encode(documents, show_progress_bar=True)
+    # Delete the collection if it exists as an empty remnant, then create a fresh one
+    try:
+        client.delete_collection(name=COLLECTION_NAME)
+    except Exception:
+        pass
+    collection = client.create_collection(name=COLLECTION_NAME,
+                                          metadata={"hnsw:space": "cosine"}) # to normalize
     
-    # Convert numpy vectors to regular lists for ChromaDB compatibility
-    embeddings_list = [emb.tolist() for emb in embeddings]
-    
-    # 4. Insert everything into ChromaDB in controlled batches of 100
-    batch_size = 100
-    print("[vector_db] Loading database records...")
-    for i in range(0, len(documents), batch_size):
-        end_idx = min(i + batch_size, len(documents))
-        
-        collection.add(
-            ids=ids[i:end_idx],
-            embeddings=embeddings_list[i:end_idx],
-            metadatas=metadatas[i:end_idx],
-            documents=documents[i:end_idx]
-        )
-        print(f" └── Loaded entries {i} through {end_idx} successfully.")
-        
-    print(f"\n SUCCESS: Vector index built. 731 items written to '{CHROMA_DATA_PATH}/'")
-    return collection
-
-if __name__ == "__main__":
-    # Path to your catalog data
-    CSV_FILE_PATH = "docs/energical_catalogue_produits.csv"
-    
-    # Initialize the model we verified in Step 2
-    print("[vector_db] Attaching local embedding engine...")
+    # 3. Load your embedding model
+    print("[Database Builder] Loading translation embedding engine weights...")
     model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
     
-    # Run the database indexing pipeline
-    build_vector_index(CSV_FILE_PATH, model)
+    # 4. Use your Scalable Matcher to enrich the database descriptions with keyword anchors
+    matcher = ScalableIntentMatcher()
+    
+    enriched_documents = []
+    print("[Database Builder] Optimizing semantic descriptions with keyword maps...")
+    for doc in documents:
+        # Extract keywords relevant to this specific product text string
+        keywords = matcher.extract_keywords(doc)
+        # Create an enriched description string containing both the product data and matching keywords
+        final_text = f"{doc} {keywords}".strip()
+        enriched_documents.append(final_text)
+        
+    # 5. Generate embeddings and save directly into your clean directory
+    print(f"[Database Builder] Computing vector grids for {len(enriched_documents)} products. Please wait...")
+    embeddings = model.encode(enriched_documents, show_progress_bar=True).tolist()
+    
+    collection.add(
+        embeddings=embeddings,
+        documents=enriched_documents,
+        metadatas=metadatas,
+        ids=ids
+    )
+    
+    print("\n SUCCESS: New chroma_db created and fully loaded with optimized arrays!")
+
+if __name__ == "__main__":
+    build_vector_database()

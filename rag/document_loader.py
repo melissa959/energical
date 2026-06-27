@@ -58,7 +58,7 @@ def prepare_product_documents(csv_path: str):
     return documents, metadatas, ids
 
 if __name__ == "__main__":
-    TEST_CSV_PATH = "../docs/energical_catalogue_produits.csv"
+    TEST_CSV_PATH = "../docs/catalogue_propre.csv"
     try:
         docs, metas, p_ids = prepare_product_documents(TEST_CSV_PATH)
         print("\n=== Data Schema Verification ===")
