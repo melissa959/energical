@@ -140,14 +140,14 @@ st.markdown("""
 .eg-brand { display: flex; align-items: center; gap: 11px; }
 .eg-logo {
     width: 30px; height: 30px; border-radius: 8px;
-    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+    
     display: flex; align-items: center; justify-content: center;
     font-size: 15px; font-weight: 700; color: #fff; overflow: hidden;
     flex-shrink: 0;
 }
-.eg-brand-name { font-size: 15px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+.eg-brand-name { font-size: 15px; font-weight: 700; color: #f97316; letter-spacing: -0.02em; }
 .eg-vsep { width: 1px; height: 16px; background: #e2e8f0; }
-.eg-brand-role { font-size: 12px; color: #64748b; }
+.eg-brand-role { font-size: 12px; color: #f97316; }
 .eg-right { display: flex; align-items: center; gap: 12px; }
 .eg-online { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; font-weight: 500; }
 .eg-dot {
@@ -159,7 +159,7 @@ st.markdown("""
     50%      { opacity:0.6; transform:scale(0.9); }
 }
 .eg-lang {
-    font-size: 9px; font-weight: 600; color: #94a3b8; background: #f1f5f9;
+    font-size: 9px; font-weight: 600; color: #f97316; background: #f1f5f9;
     border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 6px;
     font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em;
 }
@@ -173,24 +173,25 @@ st.markdown("""
 }
 .eg-landing-badge {
     display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.15);
+    background: rgba(249,115,22,0.15);
+border: 1px solid rgba(249,115,22,0.3);
     border-radius: 24px; padding: 6px 16px; margin-bottom: 26px;
-    font-size: 11.5px; font-weight: 600; color: #2563eb;
+    font-size: 11.5px; font-weight: 600; color: #f97316;
 }
-.eg-landing-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #2563eb; }
+.eg-landing-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #f97316; }
 .eg-landing-icon {
     width: 76px; height: 76px; border-radius: 22px;
-    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+    
     display: flex; align-items: center; justify-content: center;
     font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 22px;
     box-shadow: 0 8px 32px rgba(37,99,235,0.25); overflow: hidden;
 }
 .eg-landing-title {
-    font-size: 34px; font-weight: 700; color: #0f172a;
+    font-size: 34px; font-weight: 700; color: #f97316;
     letter-spacing: -0.03em; line-height: 1.2;
     text-align: center; margin-bottom: 14px;
 }
-.eg-landing-title span { color: #2563eb; }
+.eg-landing-title span { color: #f97316; }
 .eg-landing-sub {
     font-size: 14.5px; color: #64748b; line-height: 1.7;
     text-align: center; max-width: 420px; margin-bottom: 30px;
@@ -222,12 +223,12 @@ st.markdown("""
 }
 .eg-empty-icon {
     width: 52px; height: 52px; border-radius: 16px;
-    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+   
     display: flex; align-items: center; justify-content: center;
     font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 16px;
     box-shadow: 0 6px 24px rgba(37,99,235,0.22); overflow: hidden;
 }
-.eg-empty-title { font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; margin-bottom: 8px; text-align: center; }
+.eg-empty-title { font-size: 20px; font-weight: 700; color: #f97316; letter-spacing: -0.02em; margin-bottom: 8px; text-align: center; }
 .eg-empty-sub { font-size: 13px; color: #64748b; max-width: 300px; text-align: center; margin-bottom: 24px; }
 
 /* Starter chip buttons — scoped to .eg-chips-row */
@@ -235,7 +236,7 @@ st.markdown("""
     background: #fff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 12px !important;
-    color: #0f172a !important;
+    color: #f97316 !important;
     font-size: 13px !important;
     font-weight: 500 !important;
     padding: 12px 14px !important;
@@ -277,10 +278,10 @@ st.markdown("""
     margin-top: 2px; overflow: hidden;
 }
 .eg-av.ai {
-    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+    
     color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.28);
 }
-.eg-av.usr { background: #e2e8f0; color: #0f172a; }
+.eg-av.usr { background: #e2e8f0; color: #f97316; }
 
 .eg-bc { display: flex; flex-direction: column; gap: 4px; min-width: 0; max-width: 82%; }
 .eg-msg.user .eg-bc { align-items: flex-end; }
@@ -296,7 +297,7 @@ st.markdown("""
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 .eg-bub.usr {
-    background: #2563eb; color: #fff;
+    background: #f97316; color: #fff;
     border-top-right-radius: 4px;
 }
 
@@ -348,7 +349,7 @@ st.markdown("""
 .eg-card.alt::before { background: linear-gradient(90deg,#d97706,#f59e0b); }
 .eg-card.out::before { background: linear-gradient(90deg,#dc2626,#ef4444); }
 .eg-card:hover {
-    border-color: #2563eb;
+    border-color: #f97316;
     box-shadow: 0 4px 14px rgba(0,0,0,0.07);
     transform: translateY(-2px);
 }
@@ -361,7 +362,7 @@ st.markdown("""
 .eg-badge.ok  { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
 .eg-badge.alt { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
 .eg-badge.out { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-.eg-cn { font-size: 12px; font-weight: 500; color: #0f172a; line-height: 1.4; margin-bottom: 6px; min-height: 28px; }
+.eg-cn { font-size: 12px; font-weight: 500; color: #f97316; line-height: 1.4; margin-bottom: 6px; min-height: 28px; }
 .eg-chr { height: 1px; background: #e2e8f0; margin: 7px 0; }
 .eg-cp {
     font-size: 14px; font-weight: 700; color: #2563eb;
@@ -386,13 +387,13 @@ st.markdown("""
 }
 [data-testid="stChatInput"] textarea {
     background: transparent !important; border: none !important;
-    color: #0f172a !important; font-size: 14px !important;
+    color: #f97316 !important; font-size: 14px !important;
     padding: 11px 14px !important; min-height: 46px !important;
     font-family: 'Inter', sans-serif !important;
 }
 [data-testid="stChatInput"] textarea::placeholder { color: #94a3b8 !important; }
 [data-testid="stChatInput"] button {
-    background: linear-gradient(135deg,#2563eb,#1d4ed8) !important;
+    background: linear-gradient(135deg,#f97316,#ea580c) !important;
     border-radius: 11px !important; color: #fff !important;
     margin: 4px !important; min-width: 38px !important; min-height: 38px !important;
     transition: all 0.15s !important;
