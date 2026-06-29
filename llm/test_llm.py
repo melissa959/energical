@@ -2,7 +2,7 @@ from business.process_business_rules import BusinessRecommendationEngine
 
 engine = BusinessRecommendationEngine()
 
-# Simulating your real pipeline output
+
 retrieved_products = [
     {
         "id": "P001",
@@ -36,12 +36,12 @@ result = engine.process_business_rules(
     "surface_m2": 120,
     "region": "Nord",
     "condensation": "oui",
-    "energie": "gaz",      # ← add this
-    "usage": "chauffage"   # ← add this
+    "energie": "gaz",     
+    "usage": "chauffage"  
 },
-    turn_count=3,           # must be >= 3 to pass the turn gate
+    turn_count=3,          
     retrieved_products=retrieved_products,
-    user_question=user_question   # ← was missing before
+    user_question=user_question  
 )
 
 print("STATUS :", result["status"])

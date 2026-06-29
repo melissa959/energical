@@ -1,15 +1,4 @@
-"""
-llm/groq_client.py
-==================
-Energical AI Sales Assistant v7
 
-FIXES :
-- FIX C : message de politesse -> accusé de réception simple, pas de relance
-- FIX B : last_recommended passé au prompt pour zoom précis
-- _pick_followup_question : alias energie/combustible
-- Zoom 1 produit : prompt strict "ce produit uniquement"
-- Pas d'emojis
-"""
 
 import os
 import re
@@ -227,7 +216,7 @@ def generate_answer(user_question: str, business_result: dict) -> str:
         re.match(p, user_question.lower().strip()) for p in _short_re
     )
 
-    # ---- FIX C : message de politesse ------------------------------------
+    
 
     if is_courtesy:
         user_prompt = f"""\
@@ -237,7 +226,7 @@ Reponds de facon breve et chaleureuse (1-2 phrases maximum).
 Si le client semble avoir termine, propose-lui de revenir si besoin.
 Ne relance pas de recommandation non demandee. Pas d'emojis."""
 
-    # ---- Premier message -------------------------------------------------
+    
 
     elif is_first:
         if is_vague_message(user_question) and not category:
@@ -273,7 +262,7 @@ Termine par : "Laquelle de ces categories vous interesse ?" """
 
     elif is_followup and has_products:
 
-        # Zoom sur 1 produit precis
+       
         if len(products) == 1:
             p        = products[0]
             nom      = p.get("metadata", {}).get("nom", "ce produit")
@@ -418,8 +407,7 @@ Reponds de facon utile et naturelle.
 Catalogue Energical : {_CATALOG}
 Pas d'emojis."""
 
-    # ---- System prompt ---------------------------------------------------
-
+ 
     system = f"""\
 Tu es le conseiller commercial d'Energical Algerie.
 Energical est specialiste en equipements pour la maison : chauffage, chauffe-eau, climatisation, robinetterie, visiophonie.
@@ -438,7 +426,7 @@ REGLES ABSOLUES :
 GLOSSAIRE DARIJA :
 {_GLOSSARY}"""
 
-    # ---- Appel API -------------------------------------------------------
+    
 
     _throttler.wait_if_needed()
     groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))

@@ -83,7 +83,7 @@ SOUS_CATEGORIE_KEYWORDS = {
     ],
 }
 
-# ── NEW: decision tree field keywords ────────────────────────
+
 REGION_KEYWORDS = {
     "Nord":   ["nord", "alger", "oran", "annaba", "bejaia", "tizi", "blida", "boumerdes"],
     "Sud":    ["sud", "tamanrasset", "adrar", "ouargla", "ghardaia", "biskra", "bechar"],
@@ -116,19 +116,19 @@ class MemoryExtractor:
         data = {}
         text = message.lower()
 
-        # --- Category ---
+        #  Category 
         for category, keywords in CATEGORY_KEYWORDS.items():
             if any(kw in text for kw in keywords):
                 data["category"] = category
                 break
 
-        # --- Sous-categorie ---
+       
         for sous_cat, keywords in SOUS_CATEGORIE_KEYWORDS.items():
             if any(kw in text for kw in keywords):
                 data["sous_categorie"] = sous_cat
                 break
 
-        # --- Budget ---
+       
         budget_match = re.search(
             r"(\d[\d\s]{1,6})\s*(da|dzd|دج)?", text
         )
@@ -141,47 +141,47 @@ class MemoryExtractor:
             except ValueError:
                 pass
 
-        # --- Capacity in litres ---
+        
         capacity_match = re.search(
             r"(\d+)\s*(l\b|litres?|litre)", text
         )
         if capacity_match:
             data["capacity"] = int(capacity_match.group(1))
 
-        # ── NEW: decision tree fields ─────────────────────────
+      
 
-        # surface_m2 — e.g. "120m2", "120 m²", "120 metres"
+      
         surface_match = re.search(
             r"(\d+)\s*(m2|m²|m carré|metres?|مترمربع)", text
         )
         if surface_match:
             data["surface_m2"] = int(surface_match.group(1))
 
-        # region
+        
         for region, keywords in REGION_KEYWORDS.items():
             if any(kw in text for kw in keywords):
                 data["region"] = region
                 break
 
-        # energie
+       
         for energie, keywords in ENERGIE_KEYWORDS.items():
             if any(kw in text for kw in keywords):
                 data["energie"] = energie
                 break
 
-        # usage
+        
         for usage, keywords in USAGE_KEYWORDS.items():
             if any(kw in text for kw in keywords):
                 data["usage"] = usage
                 break
 
-        # condensation — oui/non
+      
         if any(kw in text for kw in ["condensation", "condensing", "condensateur"]):
             if any(kw in text for kw in ["sans", "non", "pas", "no"]):
                 data["condensation"] = "non"
             else:
                 data["condensation"] = "oui"
 
-        # ─────────────────────────────────────────────────────
+       
 
         return data

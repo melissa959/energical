@@ -1,14 +1,4 @@
-# ==========================================================
-# guardrails.py
-#
-# Phase 4B - Business Recommendation Engine
-#
-# This module builds the system prompt that will later be
-# sent to the LLM.
-#
-# The objective is to force the model to respect
-# Energical's business rules and never invent information.
-# ==========================================================
+
 
 
 class Guardrails:

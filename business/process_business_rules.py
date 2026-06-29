@@ -1,11 +1,4 @@
-# ==========================================================
-# process_business_rules.py
-#
-# Phase 4B - Business Recommendation Engine
-#
-# Receives products from the RAG, applies all business rules,
-# then sends the validated products to the LLM.
-# ==========================================================
+
 
 from .decision_tree import DecisionTree
 from .stock_interceptor import StockInterceptor
@@ -71,9 +64,7 @@ class BusinessRecommendationEngine:
             Final business result including llm_answer.
         """
 
-        # ==================================================
-        # STEP 1 — Verify category
-        # ==================================================
+      
 
         if not self.tree.category_exists(category):
 
@@ -90,9 +81,7 @@ class BusinessRecommendationEngine:
 
             return _send_to_llm(user_question, business_result)
 
-        # ==================================================
-        # STEP 2 — Verify minimum conversation length
-        # ==================================================
+        
 
         if turn_count < 3:
 
@@ -109,9 +98,7 @@ class BusinessRecommendationEngine:
 
             return _send_to_llm(user_question, business_result)
 
-        # ==================================================
-        # STEP 3 — Verify customer information
-        # ==================================================
+       
 
         tree_result = self.tree.ready(category, collected_information)
 
@@ -122,17 +109,14 @@ class BusinessRecommendationEngine:
                 "allow_recommendation": False,
                 "reason":               tree_result["message"],
                 "missing_information":  tree_result["missing"],
-                # Pass RAG results so LLM can mention relevant products
-                # while asking for the missing info
+              
                 "products":             retrieved_products or [],
                 "system_prompt":        self.guardrails.build_system_rules(),
             }
 
             return _send_to_llm(user_question, business_result)
 
-        # ==================================================
-        # STEP 4 — Verify RAG results
-        # ==================================================
+        
 
         if len(retrieved_products) == 0:
 
@@ -147,15 +131,11 @@ class BusinessRecommendationEngine:
 
             return _send_to_llm(user_question, business_result)
 
-        # ==================================================
-        # STEP 5 — Apply stock validation
-        # ==================================================
+       
 
         validated_products = self.stock.replace_if_needed(retrieved_products)
 
-        # ==================================================
-        # STEP 6 — Separate product statuses
-        # ==================================================
+       
 
         final_products       = []
         unavailable_products = []
@@ -174,9 +154,7 @@ class BusinessRecommendationEngine:
             elif status == "INVALID_PRODUCT":
                 invalid_products.append(product)
 
-        # ==================================================
-        # STEP 7 — Nothing recommendable remains
-        # ==================================================
+        
 
         if len(final_products) == 0:
 
@@ -204,9 +182,7 @@ class BusinessRecommendationEngine:
 
             return _send_to_llm(user_question, business_result)
 
-        # ==================================================
-        # STEP 8 — Business validation succeeded
-        # ==================================================
+     
 
         business_result = {
             "status":               "SUCCESS",
@@ -217,8 +193,6 @@ class BusinessRecommendationEngine:
             "system_prompt":        self.guardrails.build_system_rules(),
         }
 
-        # ==================================================
-        # STEP 9 — Generate final recommendation with Llama
-        # ==================================================
+       #generate with lama
 
         return _send_to_llm(user_question, business_result)

@@ -1,13 +1,4 @@
-"""
-src/chat.py
-===========
-ChatManager v7
 
-FIXES :
-A. "plus de details" sans nom -> utilise last_recommended automatiquement
-B. last_recommended setté dès qu'une recommandation apparait dans la réponse LLM
-C. Messages de politesse ("merci", "ok", "super"...) -> réponse courte, pas de RAG
-"""
 
 import sys
 import os
@@ -41,9 +32,6 @@ CHROMA_DATA_PATH = os.path.normpath(
 )
 COLLECTION_NAME = "energical_catalog"
 
-# ---------------------------------------------------------------------------
-# Normalisation saisie client
-# ---------------------------------------------------------------------------
 
 _NORMALIZATIONS = [
     (r'\butane\b|\bboutane\b|\bbutanee?\b|\buutane\b|\butanne\b', 'butane'),
@@ -67,9 +55,7 @@ def _normalize_input(text: str) -> str:
     return t
 
 
-# ---------------------------------------------------------------------------
-# FIX C : Messages de politesse -> pas de RAG, réponse simple
-# ---------------------------------------------------------------------------
+
 
 _COURTESY_PATTERNS = [
     r'^(merci|mercii+|thx|thank(s| you)|shukran|choukran|barak\s*allah|wach\s*rak)[\s!.]*$',
@@ -86,9 +72,6 @@ def _is_courtesy(text: str) -> bool:
     return False
 
 
-# ---------------------------------------------------------------------------
-# Mots parasites
-# ---------------------------------------------------------------------------
 
 _QUERY_NOISE = [
     "svp", "stp", "please", "merci", "ok", "oui", "non",
@@ -96,9 +79,7 @@ _QUERY_NOISE = [
     "pouvez vous", "pourriez vous", "aidez moi", "aide moi",
 ]
 
-# ---------------------------------------------------------------------------
-# Reponse memoire courte
-# ---------------------------------------------------------------------------
+
 
 _MEMORY_ANSWER_PATTERNS = [
     r'^\d+\s*(m2|metres?(\s*carr[eé]s?)?|m²)?$',
@@ -123,9 +104,7 @@ def _is_memory_answer(text: str) -> bool:
     return False
 
 
-# ---------------------------------------------------------------------------
-# Patterns followup
-# ---------------------------------------------------------------------------
+
 
 _FOLLOWUP_PATTERNS = [
     r"quel(le)?\s+(est|sont)\s+(le|la|les)?\s*(meilleur|mieux|plus)",
@@ -160,7 +139,7 @@ _FOLLOWUP_PATTERNS = [
     r"donne\s+moi\s+le\s+prix",
     r"c'est\s+combien", r"il\s+co[uû]te\s+combien",
     r"le\s+tarif",
-    # FIX A : "plus de details" seul sans nom de produit
+   
     r"^(donne[- ]moi\s+)?(plus\s+de\s+d[eé]tails?|plus\s+d'infos?|en\s+savoir\s+plus)[\s!.?]*$",
 ]
 
@@ -172,9 +151,7 @@ def _is_followup_on_products(text: str) -> bool:
     return False
 
 
-# ---------------------------------------------------------------------------
-# FIX A+B : Detecter le produit vise
-# ---------------------------------------------------------------------------
+
 
 _ORDINAL_MAP = {
     r'premi[eè]re?|numero\s*1|produit\s*1': 0,
@@ -193,7 +170,7 @@ def _find_targeted_product(text: str, products: list, last_recommended: dict = N
     """
     t = text.lower()
 
-    # 1. Nom ou référence explicite
+    
     for p in products:
         m   = p.get("metadata", {})
         nom = m.get("nom", "").lower()
@@ -206,13 +183,12 @@ def _find_targeted_product(text: str, products: list, last_recommended: dict = N
         if words and all(w in t for w in words):
             return [p]
 
-    # 2. Ordinal
+    
     for pattern, idx in _ORDINAL_MAP.items():
         if re.search(pattern, t) and idx < len(products):
             return [products[idx]]
 
-    # 3. Pronom vague ou "plus de details" sans nom
-    #    -> utiliser last_recommended en priorité (FIX B)
+   
     pronom_vague = re.search(
         r"celui[- ]l[aà]|celle[- ]l[aà]|ce\s+produit|cette\s+chaudiere|"
         r"celle\s+que\s+tu\s+(m'as\s+)?conseill|ce\s+mod[eè]le|"
@@ -227,9 +203,7 @@ def _find_targeted_product(text: str, products: list, last_recommended: dict = N
     return products
 
 
-# ---------------------------------------------------------------------------
-# FIX B : Extraire le produit recommandé depuis la réponse LLM
-# ---------------------------------------------------------------------------
+
 
 def _extract_recommended_product(llm_reply: str, products: list) -> dict | None:
     """
@@ -251,9 +225,7 @@ def _extract_recommended_product(llm_reply: str, products: list) -> dict | None:
     return None
 
 
-# ---------------------------------------------------------------------------
-# RAG
-# ---------------------------------------------------------------------------
+
 
 def _clean_query(text: str) -> str:
     t = text.lower()
@@ -324,9 +296,7 @@ def _clean_memory(mem: dict) -> dict:
     return {k: v for k, v in mem.items() if k not in _SYSTEM_INJECTED_FIELDS}
 
 
-# ---------------------------------------------------------------------------
-# ChatManager
-# ---------------------------------------------------------------------------
+
 
 class ChatManager:
 
@@ -380,18 +350,18 @@ class ChatManager:
         self.turns.increment()
         turn_count = self.turns.get_turn_count()
 
-        # 2. Categorie stable
+       
         category = self._resolve_category(user_message)
         if not category:
             category = self._resolve_category(normalized_message)
 
-        # FIX C : Message de politesse -> réponse simple, pas de RAG
+       
         if _is_courtesy(user_message):
             filtered_products = []
             rag_query   = "[message de politesse]"
             is_followup = False
 
-        # Message vague sans categorie -> pas de RAG
+        
         elif is_vague_message(user_message) and not category:
             filtered_products = []
             rag_query   = "[message vague - pas de RAG]"
@@ -459,22 +429,22 @@ class ChatManager:
         business_result["allow_recommendation"]  = True
         business_result["collected_information"]  = mem
         business_result["is_followup"]            = is_followup
-        # Passer last_recommended au LLM pour le prompt
+        
         business_result["last_recommended"]       = self.last_recommended
-        # FIX C : signaler message de politesse
+       
         business_result["is_courtesy"]            = _is_courtesy(user_message)
 
         llm_reply = generate_answer(user_message, business_result)
         self.history.add_assistant(llm_reply)
 
-        # FIX B : mettre a jour last_recommended depuis la reponse LLM
+       
         all_products_pool = self.last_products or filtered_products
         if all_products_pool:
             detected = _extract_recommended_product(llm_reply, all_products_pool)
             if detected:
                 self.last_recommended = detected
 
-        # Memoriser la liste complete (ne pas ecraser avec un zoom a 1 produit)
+        
         if filtered_products:
             if not (is_followup and len(filtered_products) == 1 and len(self.last_products) > 1):
                 self.last_products = filtered_products

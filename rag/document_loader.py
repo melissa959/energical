@@ -11,7 +11,7 @@ def prepare_product_documents(csv_path: str):
         
     df = pd.read_csv(csv_path)
     
-    # Handle missing values based on your schema data types
+  
     df = df.fillna({
         'nom_produit': 'Produit sans nom',
         'categorie': 'Général',
@@ -27,11 +27,10 @@ def prepare_product_documents(csv_path: str):
     ids = []
     
     for index, row in df.iterrows():
-        # Get the real product ID from 'id_produit' column
+       
         prod_id = str(row['id_produit'])
         
-        # CREATE THE SEAMLESS TEXT STRING (What the Vector model reads)
-        # We include the sub-category and short description to give the vector more meaning
+        
         text_string = (
             f"Produit: {row['nom_produit']} | "
             f"Catégorie: {row['categorie']} ({row['sous_categorie']}) | "
@@ -39,8 +38,7 @@ def prepare_product_documents(csv_path: str):
             f"Prix: {row['prix_da']} DA"
         )
         
-        # CREATE THE METADATA DICTIONARY (What Programmer 2 reads)
-        # Note the exact names match CSV columns
+        
         metadata = {
             "id": prod_id,
             "nom": str(row['nom_produit']),

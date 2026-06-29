@@ -1,19 +1,4 @@
-"""
-app.py — Energical Assistant Commercial
-Fixed version.
 
-Bugs fixed vs previous:
-1. get_groq_client() no longer called at module top-level (was crashing on import).
-2. LLM replies now render markdown properly (bold, lists) instead of showing raw **.
-3. Product cards rendered OUTSIDE the message bubble (not crammed inside it).
-4. Spinner shows "Karim réfléchit..." so user knows the bot is working.
-5. Logo loader no longer has hardcoded Windows path.
-6. Reset button style no longer conflicts with chip button override.
-7. Token usage only shown when > 0 and only on demand (sidebar toggle).
-8. Chat input placeholder is friendly, not technical.
-9. `eg-reset-row` button selector made specific so it doesn't fight other buttons.
-10. st.chat_message wrappers removed (we render our own HTML bubbles cleanly).
-"""
 
 import html
 import textwrap
@@ -31,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+
 def md(html_str: str):
     st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
 
@@ -47,24 +32,24 @@ def markdown_to_html(text: str) -> str:
     inside our custom bubble (not inside st.markdown which we don't use here).
     Handles: **bold**, *italic*, numbered lists, bullet lists, line breaks.
     """
-    # Escape HTML first so we don't break the bubble
+   
     t = html.escape(str(text), quote=False)
 
-    # Bold **text**
+   
     t = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', t)
-    # Italic *text* (not inside bold)
+    
     t = re.sub(r'\*(.+?)\*', r'<em>\1</em>', t)
-    # Line breaks
+    
     t = t.replace('\n', '<br>')
-    # Numbered list items that start with "1." "2." etc
+    
     t = re.sub(r'(?:^|<br>)(\d+)\.\s+', r'<br><span class="eg-li-num">\1.</span> ', t)
-    # Bullet list items that start with "- " or "• "
+   
     t = re.sub(r'(?:^|<br>)[•\-]\s+', r'<br><span class="eg-li-bul">•</span> ', t)
-    # Remove leading <br> if any
+
     t = t.lstrip('<br>')
     return t
 
-# ── Logo loader ────────────────────────────────────────────────────────────────
+
 def get_logo_b64(path: str = "static/logo.png") -> str:
     candidates = [
         path,
@@ -90,7 +75,7 @@ def logo_img(size: str = "100%", radius: str = "inherit") -> str:
         f'border-radius:{radius};display:block;" alt="logo">'
     )
 
-# ── CSS ────────────────────────────────────────────────────────────────────────
+
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -420,7 +405,7 @@ border: 1px solid rgba(249,115,22,0.3);
 </style>
 """, unsafe_allow_html=True)
 
-# ── Session state init ─────────────────────────────────────────────────────────
+
 if "chat" not in st.session_state:
     with st.spinner("Démarrage de l'assistant..."):
         st.session_state.chat     = ChatManager()
@@ -429,7 +414,7 @@ if "messages" not in st.session_state:
 if "started" not in st.session_state:
     st.session_state.started  = False
 
-# ── Product cards HTML ─────────────────────────────────────────────────────────
+
 def product_cards_html(products: list) -> str:
     if not products:
         return ""
@@ -469,10 +454,10 @@ def product_cards_html(products: list) -> str:
         "</div>"
     )
 
-# ── Render one message ─────────────────────────────────────────────────────────
+
 def render_message(msg: dict):
     role     = msg["role"]
-    content  = markdown_to_html(msg["content"])   # ← renders bold/lists properly
+    content  = markdown_to_html(msg["content"])   
     products = msg.get("products", [])
     t        = msg.get("time", "")
 
@@ -487,7 +472,7 @@ def render_message(msg: dict):
         </div>""")
     else:
         av = logo_img("20px", "50%") if LOGO_URI else "E"
-        # Cards rendered OUTSIDE the bubble — separate div below it
+       
         cards = product_cards_html(products)
         md(f"""
         <div class="eg-msg">
@@ -499,7 +484,7 @@ def render_message(msg: dict):
         </div>
         {cards}""")
 
-# ── Topbar HTML ────────────────────────────────────────────────────────────────
+
 def topbar():
     logo_sm = logo_img("28px", "7px") if LOGO_URI else "E"
     md(f"""
@@ -516,9 +501,7 @@ def topbar():
         </div>
     </div>""")
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  LANDING PAGE
-# ══════════════════════════════════════════════════════════════════════════════
+
 if not st.session_state.started:
     topbar()
 
@@ -555,13 +538,11 @@ if not st.session_state.started:
             st.rerun()
         md('</div>')
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  CHAT PAGE
-# ══════════════════════════════════════════════════════════════════════════════
+
 else:
     topbar()
 
-    # ── Empty state with starter chips ────────────────────────────────────────
+  
     if not st.session_state.messages:
         logo_md = logo_img("38px", "10px") if LOGO_URI else "E"
         md(f"""
@@ -596,7 +577,7 @@ else:
                     st.rerun()
         md('</div>')
 
-    # ── Conversation ───────────────────────────────────────────────────────────
+   
     else:
         md('<div class="eg-scroll"><div class="eg-ci">')
         md('<div class="eg-divider">Aujourd\'hui</div>')
@@ -604,7 +585,7 @@ else:
             render_message(msg)
         md('</div></div>')
 
-    # ── Chat input ─────────────────────────────────────────────────────────────
+   
     user_input = st.chat_input("Posez votre question (francais, darija, arabe)...")
 
     if user_input:
@@ -622,7 +603,7 @@ else:
         })
         st.rerun()
 
-    # ── Reset ──────────────────────────────────────────────────────────────────
+
     _, col_btn, _ = st.columns([1, 1, 1])
     with col_btn:
         md('<div class="eg-reset-wrap">')
@@ -632,7 +613,7 @@ else:
             st.rerun()
         md('</div>')
 
-    # ── Sidebar — tech panel (dev only, hidden from customer) ─────────────────
+ 
     with st.sidebar:
         st.markdown("### Panneau Technique")
 

@@ -11,13 +11,13 @@ class ConversationMemory:
         self.sous_categorie: Optional[str] = None
         self.budget: Optional[int] = None
         self.capacity: Optional[int] = None
-        # ── NEW: decision tree fields ─────────────────────
+      
         self.surface_m2: Optional[int] = None
         self.region: Optional[str] = None
         self.energie: Optional[str] = None
         self.usage: Optional[str] = None
         self.condensation: Optional[str] = None
-        # ─────────────────────────────────────────────────
+        
 
     def update(self, **kwargs):
         for key, value in kwargs.items():

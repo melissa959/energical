@@ -39,9 +39,7 @@ class PromptBuilder:
             "few_shot_examples.txt"
         )
 
-    # ---------------------------------------------------------
-    # Load system prompt
-    # ---------------------------------------------------------
+  
 
     def load_system_prompt(self):
 
@@ -56,9 +54,7 @@ class PromptBuilder:
 
             return f.read()
 
-    # ---------------------------------------------------------
-    # Load few-shot examples
-    # ---------------------------------------------------------
+    
 
     def load_examples(self):
 
@@ -73,9 +69,7 @@ class PromptBuilder:
 
             return f.read()
 
-    # ---------------------------------------------------------
-    # Convert validated products into readable context
-    # ---------------------------------------------------------
+ 
 
     def build_product_context(self, products):
 
@@ -118,9 +112,7 @@ Description:
 
         return context
 
-    # ---------------------------------------------------------
-    # Build final prompt
-    # ---------------------------------------------------------
+ 
 
     def build_prompt(
         self,

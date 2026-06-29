@@ -21,9 +21,7 @@ class StockInterceptor:
 
     def __init__(self):
 
-        # --------------------------------------------------
-        # Load Energical product catalog
-        # --------------------------------------------------
+       
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -51,9 +49,9 @@ class StockInterceptor:
 
             self.products[str(row["id_produit"])] = row
 
-    # ------------------------------------------------------
+    
     # Main Business Rule
-    # ------------------------------------------------------
+    
 
     def replace_if_needed(self, retrieved_products):
 
@@ -65,9 +63,7 @@ class StockInterceptor:
 
         for product in retrieved_products:
 
-            # ----------------------------------------------
-            # Validate product format
-            # ----------------------------------------------
+            
 
             metadata = product.get("metadata")
 
@@ -86,9 +82,7 @@ class StockInterceptor:
 
                 continue
 
-            # ----------------------------------------------
-            # Product available
-            # ----------------------------------------------
+            
 
             stock = metadata.get("statut_stock", "Rupture")
 
@@ -100,15 +94,12 @@ class StockInterceptor:
 
                 continue
 
-            # ----------------------------------------------
-            # Product unavailable
-            # ----------------------------------------------
-
+            
             alternative_id = metadata.get(
                 "id_produit_alternatif"
             )
 
-            # No alternative defined
+           
 
             if (
                 alternative_id is None
@@ -130,10 +121,7 @@ class StockInterceptor:
 
                 continue
 
-            # ----------------------------------------------
-            # Load replacement product
-            # ----------------------------------------------
-
+          
             alt = self.products[str(alternative_id)]
 
             replacement = {

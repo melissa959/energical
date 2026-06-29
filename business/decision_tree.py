@@ -1,12 +1,4 @@
-# ==========================================================
-# decision_tree.py
-#
-# Phase 4B - Business Recommendation Engine
-#
-# This module loads Energical's decision trees and checks
-# whether enough customer information has been collected
-# before allowing a recommendation.
-# ==========================================================
+
 
 import os
 import json
@@ -37,34 +29,19 @@ class DecisionTree:
         with open(json_path, "r", encoding="utf-8") as file:
             self.data = json.load(file)
 
-    # ------------------------------------------------------
-    # Return one product family from the JSON
-    # ------------------------------------------------------
+
     def get_family(self, category):
 
         arbres = self.data.get("arbres", {})
 
         return arbres.get(category)
 
-    # ------------------------------------------------------
-    # Verify that the requested category exists
-    # ------------------------------------------------------
+  
     def category_exists(self, category):
 
         return self.get_family(category) is not None
 
-    # ------------------------------------------------------
-    # Return every field required by the decision tree
-    # Example:
-    #
-    # [
-    #   "usage",
-    #   "surface_m2",
-    #   "energie",
-    #   "condensation",
-    #   "region"
-    # ]
-    # ------------------------------------------------------
+  
     def required_fields(self, category):
 
         tree = self.get_family(category)
@@ -82,9 +59,7 @@ class DecisionTree:
 
         return sorted(list(fields))
 
-    # ------------------------------------------------------
-    # Find missing customer information
-    # ------------------------------------------------------
+ 
     def missing_fields(self, category, collected_info):
 
         required = self.required_fields(category)
@@ -93,30 +68,28 @@ class DecisionTree:
 
         for field in required:
 
-            # Field does not exist
+            
             if field not in collected_info:
                 missing.append(field)
                 continue
 
             value = collected_info[field]
 
-            # Empty value
+          
             if value is None:
                 missing.append(field)
                 continue
 
-            # Empty string
+            
             if isinstance(value, str) and value.strip() == "":
                 missing.append(field)
 
         return missing
 
-    # ------------------------------------------------------
-    # Final validation before recommendation
-    # ------------------------------------------------------
+  
     def ready(self, category, collected_info):
 
-        # Unknown category
+      
         if not self.category_exists(category):
 
             return {
@@ -128,13 +101,13 @@ class DecisionTree:
 
         required = self.required_fields(category)
 
-        # Count filled fields
+      
         filled = [
             field for field in required
             if collected_info.get(field)
         ]
 
-        # Pass if at least 3 fields are filled
+      
         if len(filled) >= 3:
 
             return {
@@ -144,7 +117,7 @@ class DecisionTree:
                 "message": "Enough information collected."
             }
 
-        # Not enough filled fields
+      
         missing = [
             field for field in required
             if not collected_info.get(field)

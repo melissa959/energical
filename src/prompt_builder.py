@@ -24,7 +24,7 @@ class PromptBuilder:
 
         messages = []
 
-        # --- 1. System prompt with memory + turn injected ---
+      
         system_prompt = PromptBuilder.load_system_prompt()
         system_prompt = system_prompt.replace(
             "{{ turn_count }}", str(turn_count)
@@ -38,7 +38,7 @@ class PromptBuilder:
             "content": system_prompt
         })
 
-        # --- 2. Retrieved products as system context ---
+      
         if products:
             context = "## Retrieved Products\n\n"
             for i, p in enumerate(products, 1):
@@ -59,11 +59,11 @@ class PromptBuilder:
             "content": context
         })
 
-        # --- 3. Chat history ---
+       
         if chat_history:
             messages.extend(chat_history)
 
-        # --- 4. Current user message ---
+      
         messages.append({
             "role": "user",
             "content": user_message

@@ -12,3 +12,4 @@ pycache/
 *.pyc
 chroma_db/
 faiss_index/
+*.txt
