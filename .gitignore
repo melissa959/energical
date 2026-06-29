@@ -7,6 +7,7 @@ docs/energical_dictionnaire_donnees.csv
 .env
 *.csv
 *.json
+*.txt
 pycache/
 .venv/
 *.pyc
